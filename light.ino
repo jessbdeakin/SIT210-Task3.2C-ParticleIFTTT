@@ -46,10 +46,10 @@ int lightPeriodStart = 0;
 uint16_t lightPeriodMin = 0;
 uint16_t lightPeriodMax = 0;
 
-void handleLightPeriodStart(uint16_t reading){
+void handleLightPeriodStart(uint16_t lux){
     lightPeriodActive = true;
     lightPeriodStart = millis() / 1000;
-    lightPeriodMax = lightPeriodMin = reading;
+    lightPeriodMax = lightPeriodMin = lux;
     
     Particle.publish("bright");
 }
@@ -97,8 +97,8 @@ unsigned int lastScheduled = millis();
 
 void loop() {
     
-    uint16_t reading = readSensor();
-    Serial.printlnf("%u", reading);
+    uint16_t lux = readSensor();
+    Serial.printlnf("%u", lux);
     
     if(millis() - lastScheduled > SCHEDULE_PERIOD){
         
@@ -106,17 +106,17 @@ void loop() {
         
         if(lightPeriodActive){
             
-            if(reading <= LIGHT_THRESHOLD){
+            if(lux <= LIGHT_THRESHOLD){
                 handleLightPeriodEnd();
             } else {
-                if(reading < lightPeriodMin) lightPeriodMin = reading;
-                if(reading > lightPeriodMax) lightPeriodMax = reading;
+                if(lux < lightPeriodMin) lightPeriodMin = lux;
+                if(lux > lightPeriodMax) lightPeriodMax = lux;
             }
             
         } else {
             
-            if(reading > LIGHT_THRESHOLD) {
-                handleLightPeriodStart(reading);
+            if(lux > LIGHT_THRESHOLD) {
+                handleLightPeriodStart(lux);
             }   
             
         }
