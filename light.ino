@@ -39,7 +39,7 @@ double readingToLux(uint16_t reading){
 //////////////////////////////////////////
 //////////////////////////////////////////
 
-#define LIGHT_THRESHOLD 10
+#define LIGHT_THRESHOLD 12
 
 bool lightPeriodActive = false;
 int lightPeriodStart = 0;
@@ -76,7 +76,7 @@ void handleLightPeriodEnd(){
     
     Particle.publish("dark", String::format(
         "{\"length\": \"%s\", \"lux\": %.2f}", 
-        lengthString.c_str(), readingToLux(lightPeriodMax)
+        lengthString.c_str(), lightPeriodMax
     ));
 }
 
@@ -97,7 +97,7 @@ unsigned int lastScheduled = millis();
 
 void loop() {
     
-    uint16_t lux = readSensor();
+    uint16_t lux = readingToLux(readSensor());
     Serial.printlnf("%u", lux);
     
     if(millis() - lastScheduled > SCHEDULE_PERIOD){
